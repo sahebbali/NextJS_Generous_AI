@@ -1,24 +1,41 @@
-import { Metadata } from "next"
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
+"use client";
 
-import { Sidebar } from "@/components/sidebar"
-import Image from "next/image";
-export const metadata: Metadata = {
-    title: "Music App",
-    description: "Example music app using the components.",
-  }
-  export default function HomePage() {
-    const { getUser } = getKindeServerSession();
-    const user = getUser();
-    
+import { ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+
+import { tools } from "@/constants";
+
+export default function HomePage() {
+  const router = useRouter();
+
   return (
-    <div className="h-full flex flex-col items-center justify-center">
-    <div className="relative h-72 w-72">
-      <Image src="/empty.png" fill alt="Empty" />
+    <div>
+      <div className="mb-8 space-y-4">
+        <h2 className="text-2xl md:text-4xl font-bold text-center">
+          Explore the power of AI
+        </h2>
+        <p className="text-muted-foreground font-light text-sm md:text-lg text-center">
+          Chat with the smartest AI - Experience the power of AI
+        </p>
+      </div>
+      <div className="px-4 md:px-20 lg:px-32 space-y-4">
+        {tools.map((tool) => (
+          <Card onClick={() => router.push(tool.href)} key={tool.href} className="p-4 border-black/5 flex items-center justify-between hover:shadow-md transition cursor-pointer">
+            <div className="flex items-center gap-x-4">
+              <div className={cn("p-2 w-fit rounded-md", tool.bgColor)}>
+                <tool.icon className={cn("w-8 h-8", tool.color)} />
+              </div>
+              <div className="font-semibold">
+                {tool.label}
+              </div>
+            </div>
+            <ArrowRight className="w-5 h-5" />
+          </Card>
+        ))}
+      </div>
     </div>
-    <p className="text-muted-foreground text-center">
-      You don&apos;t have any projects yet. <br /> Please create one.
-    </p>
-  </div>
   );
 }
