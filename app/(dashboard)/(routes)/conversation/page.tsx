@@ -32,30 +32,36 @@ import { BotAvatar } from "@/components/bot-avatar";
 
     const isLoading = form.formState.isSubmitting;
 
-    const onSubmit =async (values: z.infer<typeof formSchema>) => {
-        console.log(values);
-        try {
-          
-            const userMessage: ChatCompletionRequestMessage = { role: "user", content: values.prompt };
-          
-            const newMessages = [...messages, userMessage];
-         
-            const response = await axios.post('/api/conversation', { messages: newMessages });
-           
-            setMessages((current) => [...current, userMessage, response.data]);
-            
-            form.reset();
-          } catch (error: any) {
-            console.log("My error",error)
-            if (error?.response?.status === 403) {
-            //   proModal.onOpen();
-            } else {
-              toast.error("Something went wrong.");
-            }
-          } finally {
-            router.refresh();
-          }
+   // ... (other imports)
+
+const RATE_LIMIT_DELAY_MS = 2000; // Set the desired delay in milliseconds
+
+const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  console.log(values);
+  try {
+    const userMessage: ChatCompletionRequestMessage = { role: "user", content: values.prompt };
+    const newMessages = [...messages, userMessage];
+    
+    // Delay before making the API call
+    await new Promise((resolve) => setTimeout(resolve, RATE_LIMIT_DELAY_MS));
+
+    const response = await axios.post('/api/conversation', { messages: newMessages });
+    console.log("My Response:", response);
+    setMessages((current) => [...current, userMessage, response.data]);
+    form.reset();
+  } catch (error: any) {
+    console.log("My error", error);
+    if (error?.response?.status === 403) {
+      // Handle specific error (if necessary)
+      // proModal.onOpen();
+    } else {
+      toast.error("Something went wrong.");
     }
+  } finally {
+    router.refresh();
+  }
+};
+
 return(
     <div>
         <Heading
