@@ -48,6 +48,7 @@
     "zustand": "^4.3.9"
   },
   "devDependencies": {
-    "@types/async-retry": "^1.4.5"
+    "@types/async-retry": "^1.4.5",
+    "prisma": "^5.0.0"
   }
 }
